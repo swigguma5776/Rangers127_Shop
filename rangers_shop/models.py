@@ -31,6 +31,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(150), nullable=False, unique=True)
     password = db.Column(db.String, nullable=False)
     date_added = db.Column(db.DateTime, default = datetime.utcnow)
+    #add the relationship here 
 
     #think of our __init__() as our INSERT INTO 
     def __init__(self, username, email, password, first_name="", last_name=""):
@@ -66,6 +67,7 @@ class Product(db.Model):
     price = db.Column(db.Numeric(precision=10, scale=2), nullable = False)
     quantity = db.Column(db.Integer, nullable = False)
     date_added = db.Column(db.DateTime, default = datetime.utcnow)
+    prodord = db.relationship('ProdOrder', backref = 'product', lazy=True)
     #user_id = db.Column(db.String, db.ForeignKey('user.user_id'), nullable = False) #if we wanted to make a foreign key relationship
 
 
@@ -143,8 +145,8 @@ class ProdOrder(db.Model):
 
     def set_price(self, price, quantity):
 
-        quantity = int(quantity)
-        price = int(price)
+        quantity = float(quantity)
+        price = float(price)
 
         self.price = quantity * price
         return self.price 

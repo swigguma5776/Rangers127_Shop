@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, flash, redirect
 
 #internal imports
-from rangers_shop.models import Product, db, product_schema, products_schema 
+from rangers_shop.models import Product, Customer, ProdOrder, Order, db, product_schema, products_schema 
 from rangers_shop.forms import ProductForm
 
 
@@ -15,9 +15,23 @@ site = Blueprint('site', __name__, template_folder='site_templates') #telling yo
 @site.route('/')
 def shop():
 
-    shop = Product.query.all()
+    #data = request.json() #if they passed the user_id through the body 
 
-    return render_template('shop.html', shop=shop) #basically displaying our shop.html page 
+    #that user_id would be need to be passed to this endpoint/function
+    #when were inside flask we can use current_user.user_id 
+
+    shop = Product.query.all() #grabbing all the product
+    #shop = Product.query.filter(Product.user_id = user_id).all() #to grab products on that specific user
+    customers = Customer.query.all()
+    orders = Order.query.all()
+
+    shop_stats = {
+        'products': len(shop),
+        'sales': sum([order.order_total for order in orders]), #order totals was total cost of that specific order
+        'customers' : len(customers)
+    }
+
+    return render_template('shop.html', shop=shop, stats=shop_stats) #basically displaying our shop.html page 
 
 
 
